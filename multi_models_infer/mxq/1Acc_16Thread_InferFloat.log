@@ -1,0 +1,53 @@
++--------------Param Info--------------+
+| Start Time    : 2025-12-04_10-58-24  |
+| MXQ           : ./yolov8_pose.mxq    |
+| Core Mode     : Single               |
+| Core          : 8                    |
+| Threads       : 16                   |
+| Infer Type    : InferFloat           |
+| Batch Size    : 1                    |
++--------------------------------------+
+Total Inference      : 0 (+0)
+Total Running Time   : 0 / 100 sec
+Avg Inference        : 0.00
+Avg Turn-around Time : 0.00 ms
+Total Inference      : 7456 (+747)
+Total Running Time   : 10 / 100 sec
+Avg Inference        : 745.50
+Avg Turn-around Time : 21.43 ms
+Total Inference      : 14938 (+747)
+Total Running Time   : 20 / 100 sec
+Avg Inference        : 746.80
+Avg Turn-around Time : 21.40 ms
+Total Inference      : 22413 (+747)
+Total Running Time   : 30 / 100 sec
+Avg Inference        : 746.99
+Avg Turn-around Time : 21.39 ms
+Total Inference      : 29884 (+748)
+Total Running Time   : 40 / 100 sec
+Avg Inference        : 746.99
+Avg Turn-around Time : 21.41 ms
+Total Inference      : 37353 (+747)
+Total Running Time   : 50 / 100 sec
+Avg Inference        : 746.95
+Avg Turn-around Time : 21.41 ms
+Total Inference      : 44826 (+747)
+Total Running Time   : 60 / 100 sec
+Avg Inference        : 746.99
+Avg Turn-around Time : 21.41 ms
+Total Inference      : 52296 (+747)
+Total Running Time   : 70 / 100 sec
+Avg Inference        : 746.97
+Avg Turn-around Time : 21.41 ms
+Total Inference      : 59766 (+746)
+Total Running Time   : 80 / 100 sec
+Avg Inference        : 746.96
+Avg Turn-around Time : 21.42 ms
+Total Inference      : 67234 (+743)
+Total Running Time   : 90 / 100 sec
+Avg Inference        : 746.93
+Avg Turn-around Time : 21.42 ms
+Total Inference      : 74706 (+748)
+Total Running Time   : 100 / 100 sec
+Avg Inference        : 746.95
+Avg Turn-around Time : 21.42 ms

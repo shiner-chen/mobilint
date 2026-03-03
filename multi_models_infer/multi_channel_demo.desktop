@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Multi Channel
+Type=Application
+Exec=bash /home/mobilint/demo/demo_run.sh
+Terminal=true

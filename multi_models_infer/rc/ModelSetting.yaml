@@ -1,0 +1,36 @@
+- model_type: SSD
+  mxq_path: ../mxq/ssd.mxq
+  dev_no: 0
+  core_id:
+    - cluster: Cluster0
+      core: Core0
+- model_type: POSE
+  mxq_path: ../mxq/yolov8_pose.mxq
+  dev_no: 0
+  core_id:
+    - cluster: Cluster0
+      core: Core1
+    - cluster: Cluster0
+      core: Core2
+- model_type: FACENET
+  mxq_path: ../mxq/yolov5_face.mxq
+  dev_no: 0
+  core_id:
+    - cluster: Cluster0
+      core: Core3
+- model_type: SEGMENTATION
+  mxq_path: ../mxq/yolov8_seg.mxq
+  dev_no: 0
+  core_id:
+    - cluster: Cluster1
+      core: Core0
+    - cluster: Cluster1
+      core: Core1
+- model_type: STYLENET
+  mxq_path: ../mxq/style_mosaic.mxq
+  dev_no: 0
+  core_id:
+    - cluster: Cluster1
+      core: Core2
+    - cluster: Cluster1
+      core: Core3
