@@ -1,2 +1,13 @@
 *.mxq
 multi_models_infer/mxq/
+
+# Build artifacts
+build/
+obj/
+*.o
+*.so
+*.so.*
+*.a
+
+# Logs
+*.log
