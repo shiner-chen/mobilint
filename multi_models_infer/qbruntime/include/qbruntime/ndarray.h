@@ -1,7 +1,10 @@
 // Copyright ⓒ 2019- Mobilint Inc. All rights reserved.
+/**
+ * \file
+ */
 
-#ifndef MACCEL_NDARRAY_H_
-#define MACCEL_NDARRAY_H_
+#ifndef QBRUNTIME_NDARRAY_H_
+#define QBRUNTIME_NDARRAY_H_
 
 #include <cstddef>
 #include <cstdint>
@@ -11,9 +14,9 @@
 #include <utility>
 #include <vector>
 
-#include "maccel/export.h"
-#include "maccel/status_code.h"
-#include "maccel/type.h"
+#include "qbruntime/export.h"
+#include "qbruntime/status_code.h"
+#include "qbruntime/type.h"
 
 namespace mobilint {
 /**
@@ -35,7 +38,7 @@ inline int64_t numel(const std::vector<int64_t>& shape) {
  *
  * **Do not use this class directly; please use NDArray instead.**
  */
-class MACCEL_EXPORT NDArrayData {
+class QBRUNTIME_EXPORT NDArrayData {
 public:
     NDArrayData() = default;
     NDArrayData(int64_t bytesize, StatusCode& sc);
@@ -65,7 +68,7 @@ private:
  * data, and no memory management is performed by the NDArray.
  *
  * `NDArray` is the recommended way for providing input and receiving output to/from
- * model inferences. By using `NDArray`, unnecessary copies inside the maccel runtime
+ * model inferences. By using `NDArray`, unnecessary copies inside the qbruntime
  * are avoided, which helps improve performance during model inference operations.
  *
  * @tparam T The type of the elements in the array.
@@ -228,4 +231,4 @@ private:
 
 }  // namespace mobilint
 
-#endif  // MACCEL_NDARRAY_H_
+#endif  // QBRUNTIME_NDARRAY_H_

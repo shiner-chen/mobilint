@@ -1,14 +1,17 @@
 // Copyright ⓒ 2019- Mobilint Inc. All rights reserved.
+/**
+ * \file
+ */
 
-#ifndef MACCEL_TYPE_H_
-#define MACCEL_TYPE_H_
+#ifndef QBRUNTIME_TYPE_H_
+#define QBRUNTIME_TYPE_H_
 
 #include <cstdint>
 #include <string>
 #include <tuple>
 #include <vector>
 
-#include "maccel/export.h"
+#include "qbruntime/export.h"
 
 namespace mobilint {
 /**
@@ -17,6 +20,39 @@ namespace mobilint {
  * \brief C++ API provides core functionalities for the NPU.
  * @{
  */
+
+/**
+ * @brief Retrieves the version of the qbruntime.
+ *
+ * @return A string representing the runtime version.
+ */
+QBRUNTIME_EXPORT std::string getQbRuntimeVersion();
+
+/**
+ * @brief Retrieves the Git commit hash of the qbruntime.
+ *
+ * @return A string containing the Git hash.
+ */
+QBRUNTIME_EXPORT std::string getQbRuntimeGitVersion();
+
+/**
+ * @brief Retrieves the vendor name of the qbruntime.
+ *
+ * Typically, this function returns "mobilint."
+ *
+ * @return A string containing the vendor name.
+ */
+QBRUNTIME_EXPORT std::string getQbRuntimeVendor();
+
+/**
+ * @brief Retrieves product information of the qbruntime.
+ *
+ * This function indicates the product for which the qbruntime is built.
+ * For example, it may return values such as "aries2-v4" or "regulus-v4."
+ *
+ * @return A string containing product details.
+ */
+QBRUNTIME_EXPORT std::string getQbRuntimeProduct();
 
 /**
  * @brief Enumerates clusters in the ARIES NPU.
@@ -49,61 +85,6 @@ enum class Core : int32_t {
 };
 
 /**
- * @deprecated This enum is deprecated.
- */
-enum class CollaborationModel {
-    Unified,
-    Separated,
-    Undefined,
-};
-
-/**
- * @deprecated This enum is deprecated.
- */
-enum class CoreStatus {
-    Vacant,
-    Ready,
-    Idle,
-    Running,
-};
-
-/**
- * @deprecated This enum is deprecated.
- */
-enum class SchedulePolicy {
-    FIFO,
-    LIFO,
-    ByPriority,
-    Undefined,
-};
-
-/**
- * @deprecated This enum is deprecated.
- */
-enum class LatencySetPolicy {
-    Auto,
-    Manual,
-};
-
-/**
- * @deprecated This enum is deprecated.
- */
-enum class MaintenancePolicy {
-    Maintain,
-    DropExpired,
-    Undefined,
-};
-
-/**
- * @deprecated This enum is deprecated.
- */
-enum class InferenceResult {
-    Successful,
-    Expired,
-    Unexpected,
-};
-
-/**
  * @brief Core allocation policy
  */
 enum class CoreAllocationPolicy {
@@ -132,8 +113,6 @@ struct Scale {
         return scale_list[i];
     }
 };
-
-class Statistics;
 
 /**
  * @brief Represents a unique identifier for an NPU core.
@@ -251,7 +230,7 @@ struct BufferInfo {
  * @note Deprecated functions are included for backward compatibility, but it is
  * recommended to use the newer core mode configuration methods.
  */
-class MACCEL_EXPORT ModelConfig {
+class QBRUNTIME_EXPORT ModelConfig {
 public:
     /**
      * @brief Default constructor. This default-constructed object is initially set to
@@ -294,10 +273,13 @@ public:
      * together to process batch inference tasks efficiently. This mode is optimized for
      * batch processing.
      *
+     * @note By default, the configuration is set to use all clusters.
+     *
      * @param[in] clusters A vector of clusters to be used for multi-core batch inference.
      * @return true if the mode was successfully set, false otherwise.
      */
-    bool setMultiCoreMode(std::vector<Cluster> clusters);
+    bool setMultiCoreMode(std::vector<Cluster> clusters = {Cluster::Cluster0,
+                                                           Cluster::Cluster1});
 
     /**
      * @brief Sets the model to use global4-core mode for inference with a specified set
@@ -307,10 +289,13 @@ public:
      * global4-core mode, four local cores within the same cluster work together to
      * execute the model inference.
      *
+     * @note By default, the configuration is set to use all clusters.
+     *
      * @param[in] clusters A vector of clusters to be used for model inference.
      * @return true if the mode was successfully set, false otherwise.
      */
-    bool setGlobal4CoreMode(std::vector<Cluster> clusters);
+    bool setGlobal4CoreMode(std::vector<Cluster> clusters = {Cluster::Cluster0,
+                                                             Cluster::Cluster1});
 
     /**
      * @brief Sets the model to use global8-core mode for inference.
@@ -392,35 +377,67 @@ public:
      */
     const std::vector<CoreId>& getCoreIds() const { return mCoreIds; }
 
+    const std::vector<Cluster>& getClusters() const { return mClusters; }
+
+    /**
+     * @brief Enables or disables the asynchronous pipeline required for asynchronous
+     *        inference.
+     *
+     * Call this function with `enable` set to `true` if you intend to use
+     * `Model::inferAsync` or `Model::inferAsyncCHW`, as the asynchronous pipeline is
+     * necessary for their operation.
+     *
+     * If you are only using synchronous inference, such as `Model::infer` or
+     * `Model::inferCHW`, it is recommended to keep the asynchronous pipeline disabled
+     * to avoid unnecessary overhead.
+     *
+     * @param[in] enable Set to `true` to enable the asynchronous pipeline; set to `false`
+     *                   to disable it.
+     */
+    void setAsyncPipelineEnabled(bool enable);
+
+    /**
+     * @brief Returns whether the asynchronous pipeline is enabled in this configuration.
+     *
+     * @return `true` if the asynchronous pipeline is enabled; `false` otherwise.
+     */
+    bool getAsyncPipelineEnabled() const { return mAsyncPipelineEnabled; }
+
+    /**
+     * @brief Sets activation buffer slots for multi-activation supported model.
+     *
+     * Call this function if you want to set the number of activation buffer slots
+     * manually.
+     *
+     * If you do not call this function, the default number of activation buffer slots
+     * is set differently depending on the CoreMode.
+     *
+     * - `CoreMode::Single` : 2 * (the number of target core ids)
+     * - `CoreMode::Multi` : 2 * (the number of target clusters)
+     * - `CoreMode::Global4` : 2 * (the number of target clusters)
+     * - `CoreMode::Global8` : 2
+     *
+     * @note This function has no effect on MXQ file in version earlier than MXQv7.
+     *
+     * @note Currently, LLM model's activation slot is fixed to 1 and ignoring `count`.
+     *
+     * @param[in] count Multi activation counts. Must be >= 1.
+     */
+    void setActivationSlots(int count);
+
+    /**
+     * @brief Returns activation buffer slot count.
+     *
+     * @note This function has no meaning on MXQ file in version earlier than MXQv7.
+     *
+     * @return Activation buffer slot count.
+     */
+    int getActivationSlots() const { return mActivationSlots; }
+
     explicit ModelConfig(int num_cores); /**< deprecated */
-
-    bool includeAllCores();                   /**< deprecated */
-    bool excludeAllCores();                   /**< deprecated */
-    bool include(Cluster cluster, Core core); /**< deprecated */
-    bool include(Cluster cluster);            /**< deprecated */
-    bool include(Core core);                  /**< deprecated */
-
-    bool exclude(Cluster cluster, Core core); /**< deprecated */
-    bool exclude(Cluster cluster);            /**< deprecated */
-    bool exclude(Core core);                  /**< deprecated */
 
     bool setGlobalCoreMode(std::vector<Cluster> clusters); /**< deprecated */
 
-    bool setAutoMode(int num_cores = 1); /**< deprecated */
-    bool setManualMode();                /**< deprecated */
-
-    /**
-     * @deprecated This setting has no effect.
-     */
-    SchedulePolicy schedule_policy = SchedulePolicy::FIFO;
-    /**
-     * @deprecated This setting has no effect.
-     */
-    LatencySetPolicy latency_set_policy = LatencySetPolicy::Auto;
-    /**
-     * @deprecated This setting has no effect.
-     */
-    MaintenancePolicy maintenance_policy = MaintenancePolicy::Maintain;
     /**
      * @deprecated This setting has no effect.
      */
@@ -433,9 +450,12 @@ public:
 private:
     CoreMode mCoreMode = CoreMode::Single;
     CoreAllocationPolicy mCoreAllocationPolicy = CoreAllocationPolicy::Manual;
+    std::vector<Cluster> mClusters;
     std::vector<CoreId> mCoreIds;
     int mNumCores;
     int mForcedNPUBundleIndex = -1;  // -1 means single npu bundle usage is not forced.
+    bool mAsyncPipelineEnabled = false;
+    int mActivationSlots = 1;
 };
 
 /**
@@ -450,7 +470,23 @@ enum class LogLevel : char {
     OFF = 6,
 };
 
-MACCEL_EXPORT void setLogLevel(LogLevel level);
+/**
+ * @brief CacheType
+ */
+enum class CacheType : uint8_t { Default = 0, Batch, Error = 0x0F };
+
+/**
+ * @brief Struct representing KV-cache information.
+ */
+struct CacheInfo {
+    CacheType cache_type = CacheType::Error;
+    std::string name;
+    std::string layer_hash;
+    uint64_t size = 0;
+    size_t num_batches = 0;
+};
+
+QBRUNTIME_EXPORT void setLogLevel(LogLevel level);
 
 /**
  * @brief Starts event tracing and prepares to save the trace log to a specified file.
@@ -464,7 +500,7 @@ MACCEL_EXPORT void setLogLevel(LogLevel level);
  * @param[in] path The file path where the trace log should be stored.
  * @return True if tracing starts successfully, false otherwise.
  */
-MACCEL_EXPORT bool startTracingEvents(const char* path);
+QBRUNTIME_EXPORT bool startTracingEvents(const char* path);
 
 /**
  * @brief Stops event tracing and writes the recorded trace log.
@@ -472,7 +508,26 @@ MACCEL_EXPORT bool startTracingEvents(const char* path);
  * This function finalizes tracing and saves the collected trace data
  * to the file specified when startTracingEvents() was called.
  */
-MACCEL_EXPORT void stopTracingEvents();
+QBRUNTIME_EXPORT void stopTracingEvents();
+
+/**
+ * @brief Generates a structured summary of the specified MXQ model.
+ *
+ * Returns an overview of the model contained in the MXQ file, including:
+ * - Target NPU hardware
+ * - Supported core modes and their associated cores
+ * - The total number of model variants
+ * - For each variant:
+ *   - Input and output tensor shapes
+ *   - A list of layers with their types, output shapes, and input layer indices
+ *
+ * The summary is returned as a human-readable string in a table and is useful for
+ * inspecting model compatibility, structure, and input/output shapes.
+ *
+ * @param[in] mxq_path Path to the MXQ model file.
+ * @return A formatted string containing the model summary.
+ */
+QBRUNTIME_EXPORT std::string getModelSummary(const std::string& mxq_path);
 
 /**@}*/
 

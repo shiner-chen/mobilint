@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include "maccel/type.h"
+#include "qbruntime/type.h"
 #include "opencv2/opencv.hpp"
 
 enum class FeederType { CAMERA, VIDEO, IPCAMERA, YOUTUBE };

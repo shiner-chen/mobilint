@@ -16,11 +16,7 @@
 Model::Model(const ModelSetting& model_setting, mobilint::Accelerator& acc) {
     mobilint::StatusCode sc;
     mobilint::ModelConfig mc;
-    mc.excludeAllCores();
-
-    for (auto core_id : model_setting.core_id) {
-        mc.include(core_id.cluster, core_id.core);
-    }
+    mc.setSingleCoreMode(model_setting.core_id); 
 
     mModel = mobilint::Model::create(model_setting.mxq_path, mc, sc);
     mModel->launch(acc);

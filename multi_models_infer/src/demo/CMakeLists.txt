@@ -7,8 +7,8 @@ string(TOUPPER ${DRIVER_TYPE} UPPERCASE_DRIVER_TYPE)
 
 include(MobilintExtLib)
 if(NOT DEFINED MACCEL_PATH)
-    mobilint_extlib_declare(maccel GIT_TAG master)
-    mobilint_extlib_make_available(maccel)
+    mobilint_extlib_declare(qbruntime GIT_TAG master)
+    mobilint_extlib_make_available(qbruntime)
 endif()
 mobilint_extlib_declare(yaml-cpp)
 mobilint_extlib_make_available(yaml-cpp)
@@ -35,7 +35,7 @@ set(DEMO_SOURCES
     yaml_util.cc
 )
 set(DEMO_EXTERNAL_LIBRARIES
-    maccel
+    qbruntime 
     ${OpenCV_LIBS}
     OpenMP::OpenMP_CXX
     yaml-cpp

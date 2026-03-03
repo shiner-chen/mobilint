@@ -1,8 +1,8 @@
 ##################     Setting    ##################
 OPENCV_INCLUDE = `pkg-config --cflags opencv4`
 OPENCV_LDFLAGS = `pkg-config --libs opencv4`
-MACCEL_INCLUDE = -I./maccel/include
-MACCEL_LDFLAGS = -L./maccel/lib -lmaccel -Wl,-rpath=../maccel/lib
+MACCEL_INCLUDE = -I./qbruntime/include
+MACCEL_LDFLAGS = -L./qbruntime/lib -lqbruntime -Wl,-rpath=../qbruntime/lib
 YAML_INCLUDE = -I./yaml-cpp/include
 YAML_LDFLAGS = -L./yaml-cpp/lib -lyaml-cpp
 

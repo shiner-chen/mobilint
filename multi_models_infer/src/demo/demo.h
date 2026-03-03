@@ -6,8 +6,8 @@
 
 #include "demo/benchmarker.h"
 #include "demo/define.h"
-#include "maccel/maccel.h"
-#include "maccel/model.h"
+#include "qbruntime/qbruntime.h"
+#include "qbruntime/model.h"
 #include "opencv2/opencv.hpp"
 
 class Model;

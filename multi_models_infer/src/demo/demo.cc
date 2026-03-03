@@ -12,7 +12,7 @@
 #include "demo/benchmarker.h"
 #include "demo/feeder.h"
 #include "demo/model.h"
-#include "maccel/maccel.h"
+#include "qbruntime/qbruntime.h"
 #include "opencv2/opencv.hpp"
 
 using mobilint::Accelerator;
